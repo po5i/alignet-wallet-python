@@ -1,8 +1,9 @@
 import os
 import hashlib
+import pprint
+import json
 from dotenv import load_dotenv
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
@@ -19,6 +20,31 @@ secret_key = os.getenv('SECRET_KEY_2')
 def hello():
     return 'Alignet Send and receive test!. Go to /send or /receive'
 
+@app.route('/receive', methods=['POST'])
+def receive():
+    purchase_verication = request.form.get('purchaseVerification')
+
+    # Compute verification
+    data = '{}{}{}{}{}{}'.format(request.form.get('acquirerId'),
+                                 request.form.get('idCommerce'), 
+                                 request.form.get('purchaseOperationNumber'),
+                                 request.form.get('purchaseAmount'),
+                                 request.form.get('purchaseCurrencyCode'),
+                                 request.form.get('authorizationResult'),
+                                 secret_key)
+    m = hashlib.sha512()
+    m.update(data.encode())
+    verification = m.hexdigest()
+
+    print('request POST:')
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(request.form)
+
+    if verification == purchase_verication:
+        return 'Verification OK: {}'.format(json.dumps(request.form))
+    else:
+        return 'Failed verification'
+
 @app.route('/send')
 def send():
     # ammount
@@ -26,11 +52,11 @@ def send():
 
     # Compute verification
     data = '{}{}{}{}{}{}'.format(acquirer_id, 
-                            id_commerce, 
-                            purchase_operation,
-                            ammount,
-                            currency_code,
-                            secret_key)
+                                 id_commerce, 
+                                 purchase_operation,
+                                 ammount,
+                                 currency_code,
+                                 secret_key)
     m = hashlib.sha512()
     m.update(data.encode())
     verification = m.hexdigest()
