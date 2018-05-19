@@ -9,13 +9,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Parameters
-acquired_id = os.getenv('ACQUIRERID')
+acquirer_id = os.getenv('ACQUIRERID')
 id_commerce = os.getenv('ID_COMMERCE')
 purchase_operation = os.getenv('PURCHASE_OPERATION')
 secret_key = os.getenv('SECRET_KEY_2')
 
 # Compute verification
-data = '{}{}{}{}'.format(acquired_id, 
+data = '{}{}{}{}'.format(acquirer_id, 
                          id_commerce, 
                          purchase_operation, 
                          secret_key)
@@ -28,7 +28,7 @@ headers = {
     'Content-type': 'application/json'
 }
 data = {
-    'idAcquirer': acquired_id,
+    'idAcquirer': acquirer_id,
     'idCommerce': id_commerce,
     'operationNumber': purchase_operation,
     'purchaseVerification': verification
