@@ -1,5 +1,6 @@
 import os
 import hashlib
+import pprint
 from zeep import Client
 from dotenv import load_dotenv
 
@@ -45,8 +46,5 @@ wsdl = 'https://integracion.alignetsac.com/WALLETWS/services/WalletCommerce?wsdl
 client = Client(wsdl)
 result = client.service.RegisterCardHolder(*params)
 
-print('Response code: {}'.format(result['ansCode']))
-print('Description: {}'.format(result['ansDescription']))
-print('Association code: {}'.format(result['codAsoCardHolderWallet']))
-print('Date: {}'.format(result['date']))
-print('Time: {}'.format(result['hour']))
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(result)
